@@ -21,21 +21,29 @@ public partial class player : CharacterBody3D
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
 
-    public override void _Ready()
-    {
-        Input.MouseMode = Input.MouseModeEnum.Captured;
-    }
+	public override void _Ready()
+	{
+		Input.MouseMode = Input.MouseModeEnum.Captured;
+	}
 
-    public override void _Input(InputEvent @event)
-    {
-        if(@event is InputEventMouseMotion mouseMotionEvent){
-			RotateY(Mathf.DegToRad(mouseMotionEvent.Relative.X));
+	public override void _Input(InputEvent @event)
+	{
+		if(@event is InputEventMouseMotion mouseMotionEvent){
+			RotateY(Mathf.DegToRad(mouseMotionEvent.Relative.X * mouse_sens) * -1);
+			Node3D _head = GetNode<Node3D>("Head");
+
+			_head.RotateX(Mathf.DegToRad(mouseMotionEvent.Relative.Y * mouse_sens) * -1);
+			_head.Rotation = new Vector3(
+				Mathf.Clamp(_head.Rotation.X, Mathf.DegToRad(-89f),Mathf.DegToRad(89f)),
+				_head.Rotation.Y,
+				_head.Rotation.Z
+			);
 		}
-    }
+	}
 
 
 
-    public override void _PhysicsProcess(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
 
 		if(Input.IsActionPressed("sprint")){
